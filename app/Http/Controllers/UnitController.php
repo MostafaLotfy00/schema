@@ -45,6 +45,10 @@ class UnitController extends Controller
      */
     public function show(Unit $unit)
     {
+        $unit= Unit::where('unit_id',$unit->id)->first();
+        return response()->json([
+            'unit' => $unit,
+        ], 200);
     }
 
     /**

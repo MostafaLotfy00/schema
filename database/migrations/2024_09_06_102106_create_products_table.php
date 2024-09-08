@@ -17,10 +17,15 @@ return new class extends Migration
             $table->string('code');
             $table->string('image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('business_id')->nullable()->constrained('businesses')->nullOnDelete();
             $table->foreignId('brand_id')->nullable()->constrained('brands')->nullOnDelete();
             $table->foreignId('unit_id')->nullable()->constrained('units')->nullOnDelete();
-            $table->float('sell_price');
+            $table->foreignId('sub_unit_id')->nullable()->constrained('units')->nullOnDelete();
+            $table->float('sell_base_price');
+            $table->float('sell_sub_price');
             $table->float('purchase_price');
+            $table->float('base_quantity')->default(0);
+            $table->float('sub_quantity')->default(0);
             $table->timestamps();
         });
     }

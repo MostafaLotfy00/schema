@@ -64,8 +64,25 @@
 											</select>
 										</div>
 										<div class="form-group">
-											<label for="exampleInputEmail1">الوحدة</label>
-											<select class="form-control select2" name="unit_id">
+											<label for="exampleInputEmail1">الفرع</label>
+											<select class="form-control select2" name="business_id">
+												<option label="اختر  الفرع">
+												</option>
+												@foreach ($businesses as $business)												
+												<option value="{{ $business->id }}" @selected($business->id == $product->business_id)>
+													{{ $business->name }}
+												</option>											
+												@endforeach
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="exampleInputPassword1">سعر الشراء</label>
+											<input type="text" class="form-control" id="exampleInputPassword1" name="purchase_price" value="{{ $product->purchase_price }}" placeholder="ادخل السعر">
+										</div>
+
+										<div class="form-group">
+											<label for="exampleInputEmail1"> الوحدة الاساسية</label>
+											<select class="form-control select2" name="unit_id" id="primary_unit">
 												<option label="اختر الوحدة">
 												</option>
 												@foreach ($units as $unit)												
@@ -75,17 +92,38 @@
 												@endforeach
 											</select>
 										</div>
+									
 										<div class="form-group">
-											<label for="exampleInputPassword1">سعر الشراء</label>
-											<input type="text" class="form-control" id="exampleInputPassword1" value="{{ $product->purchase_price }}" name="purchase_price" placeholder="ادخل السعر">
+											<label for="exampleInputPassword1">سعر البيع للوحدة الاساسية</label>
+											<input type="text" class="form-control" id="exampleInputPassword1" name="sell_base_price" value="{{ $product->sell_base_price }}" placeholder="ادخل السعر">
+										</div>
+
+										<div class="form-group">
+											<label for="exampleInputPassword1"> مخزون الوحدة الاساسية</label>
+											<input type="text" class="form-control" id="exampleInputPassword1" name="base_quantity" value="{{ $product->base_quantity }}" placeholder="ادخل المخزون">
+										</div>
+
+										<div class="form-group">
+											<label for="exampleInputEmail1"> الوحدة الفرعية</label>
+											<select class="form-control select2" name="sub_unit_id" id="secondary_unit">
+												<option label="اختر الوحدة">
+												</option>
+												<option value="{{ $product->sub_unit_id }}" selected>{{ $product->subUnit->name }}</option>
+												{{-- @foreach ($units as $unit)												
+												<option value="{{ $unit->id }}">
+													{{ $unit->name }}
+												</option>												
+												@endforeach --}}
+											</select>
+										</div>
+									
+										<div class="form-group">
+											<label for="exampleInputPassword1">سعر البيع للوحدة الفرعية</label>
+											<input type="text" class="form-control" id="exampleInputPassword1" name="sell_sub_price" value="{{ $product->sell_sub_price }}" placeholder="ادخل السعر">
 										</div>
 										<div class="form-group">
-											<label for="exampleInputPassword1">سعر البيع</label>
-											<input type="text" class="form-control" id="exampleInputPassword1" value="{{ $product->sell_price }}" name="sell_price" placeholder="ادخل السعر">
-										</div>
-										<div class="form-group">
-											<label for="exampleInputPassword1">المخزون الحالي</label>
-											<input type="text" class="form-control" id="exampleInputPassword1" value="{{ $product->quantity }}" name="quantity" placeholder="ادخل السعر">
+											<label for="exampleInputPassword1"> مخزون الوحدة الفرعية</label>
+											<input type="text" class="form-control" id="exampleInputPassword1" name="sub_quantity" value="{{ $product->sub_quantity }}" placeholder="ادخل المخزون">
 										</div>
 										<div class="form-group">
 											<label for="exampleInputPassword1">صورة المنتج</label>
@@ -112,4 +150,28 @@
 <!-- Internal Nice-select js-->
 <script src="{{URL::asset('assets/plugins/jquery-nice-select/js/jquery.nice-select.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/jquery-nice-select/js/nice-select.js')}}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#primary_unit').change(function() {
+            var primaryUnitId = $(this).val();
+            $.ajax({
+                url: '/units/' + primaryUnitId, // Adjust the URL endpoint to fetch secondary units based on primary unit id
+                type: 'GET',
+                success: function(response) {
+                    $('#secondary_unit').empty();
+                    $.each(response, function(key, value) {
+						$('#secondary_unit').append('<option value="">اختر الوحدة</option>');
+						$('#secondary_unit').append('<option value="' + value.id + '">' + value.name + '</option>');
+
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+
 @endsection
